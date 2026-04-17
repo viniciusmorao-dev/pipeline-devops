@@ -10,7 +10,7 @@ on:
 
 jobs:
   job1:
-    name: Build, Tag and Deploy
+    name: Build and Deploy
     runs-on: ubuntu-latest
     steps:
       - name: Source Code Management
