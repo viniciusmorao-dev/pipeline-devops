@@ -51,4 +51,15 @@ jobs:
         host: ${{ secrets.VM_HOST }}
         username: ${{ secrets.VM_USER }}
         key: ${{ secrets.VM_SSH_KEY }}
-        script: whoami
+        script: |
+          CONTAINER_NAME=${{ github.event.repository.name }}
+
+          docker pull ${{ secrets.DOCKERHUB_USERNAME }}/$CONTAINER_NAME:${{ github.ref_name }}
+
+          docker stop $CONTAINER_NAME || true
+          docker rm $CONTAINER_NAME || true
+
+          docker run -d \
+            -p 80:80 \
+            --name $CONTAINER_NAME \
+            ${{ secrets.DOCKERHUB_USERNAME }}/$CONTAINER_NAME:${{ github.ref_name }}
