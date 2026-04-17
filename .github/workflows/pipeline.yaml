@@ -60,6 +60,6 @@ jobs:
           docker rm $CONTAINER_NAME || true
 
           docker run -d \
-            -p 8081:8081 \
+            -p 8081:80 \
             --name $CONTAINER_NAME \
             ${{ secrets.DOCKERHUB_USERNAME }}/$CONTAINER_NAME:${{ github.ref_name }}
