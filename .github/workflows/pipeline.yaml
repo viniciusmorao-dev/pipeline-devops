@@ -30,3 +30,7 @@ jobs:
       - name: Build Image
         run: |
           docker build -t $IMAGE_NAME:$IMAGE_TAG .
+      
+      - name: Push Image
+        run: |
+          docker push $IMAGE_NAME:$IMAGE_TAG
