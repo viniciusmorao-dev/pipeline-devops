@@ -52,15 +52,12 @@ jobs:
         username: ${{ secrets.VM_USER }}
         key: ${{ secrets.VM_SSH_KEY }}
         script: |
-          CONTAINER_NAME=${{ github.event.repository.name }}
-
-          docker pull ${{ secrets.DOCKERHUB_USERNAME }}/$CONTAINER_NAME:${{ github.ref_name }}
-
-          docker stop $CONTAINER_NAME || true
-          docker rm $CONTAINER_NAME || true
-
-          docker run -d \
-            --restart unless-stopped \
-            -p 8081:80 \
-            --name $CONTAINER_NAME \
-            ${{ secrets.DOCKERHUB_USERNAME }}/$CONTAINER_NAME:${{ github.ref_name }}
+          script: |
+            cd /home/${{ secrets.VM_USER }}/gp2026
+          
+            echo "DOCKERHUB_USERNAME=${{ secrets.DOCKERHUB_USERNAME }}" > .env
+            echo "TAG=${{ github.ref_name }}" >> .env
+            echo "APP_NAME=${{ github.event.repository.name }}" >> .env
+          
+            docker compose pull
+            docker compose up -d
