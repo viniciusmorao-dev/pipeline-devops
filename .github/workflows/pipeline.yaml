@@ -11,6 +11,12 @@ on:
         required: true
       GH_EMAIL:
         required: true
+      ARGOCD_SERVER:
+        required: true
+      ARGOCD_USERNAME:
+        required: true
+      ARGOCD_PASSWORD:
+        required: true
         
 jobs:
   job1:
@@ -71,3 +77,25 @@ jobs:
           git add .
           git commit -m "Update $APP_NAME image to $IMAGE_TAG"
           git push
+  job3:
+    name: Deploy ArgoCD
+    runs-on: ubuntu-latest
+    needs: job2
+    steps:
+      - name: Install ArgoCD CLI
+        run: |
+          curl -sSL -o argocd https://github.com/argoproj/argo-cd/releases/latest/download/argocd-linux-amd64
+          chmod +x argocd
+          sudo mv argocd /usr/local/bin/
+      
+      - name: Login ArgoCD
+        run: |
+          argocd login ${{ secrets.ARGOCD_SERVER }} \
+            --username ${{ secrets.ARGOCD_USERNAME }} \
+            --password ${{ secrets.ARGOCD_PASSWORD }} \
+            --insecure
+      
+      - name: Sync App
+        run: |
+          APP_NAME=${{ github.event.repository.name }}
+          argocd app sync $APP_NAME
