@@ -97,5 +97,6 @@ jobs:
       
       - name: Sync App
         run: |
+          sleep 10
           APP_NAME=${{ github.event.repository.name }}
           argocd app sync $APP_NAME
